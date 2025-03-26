@@ -1,0 +1,120 @@
+{% load static %}
+
+<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Booking</title>
+    <link href="https://fonts.googleapis.com/css?family=Cabin:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{% static 'booking/css/bootstrap.min.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'booking/css/style.css' %}">
+</head>
+<body>
+    <div id="booking" class="section">
+        <div class="section-center">
+            <div class="container">
+                <div class="row">
+                    <div class="booking-form">
+                        <div class="booking-bg"></div>
+                        <form method="post" action="{% url 'cart_products_payment' %}">
+                            {% csrf_token %}
+                            <div class="form-header">
+                                <h2>Booking and Shipping</h2>
+                            </div>
+                            <div class="form-group">
+                                <span class="form-label">Address</span>
+                                <input class="form-control" type="text" name="address" placeholder="Enter your address" required>
+                            </div>
+                            <div class="form-group">
+                                <span class="form-label">Country</span>
+                                <input class="form-control" type="text" name="country" placeholder="Enter your country" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <span class="form-label">Pincode</span>
+                                        <input class="form-control" type="text" name="pincode" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <span class="form-label">State</span>
+                                        <input class="form-control" type="text" name="state" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="form-label">Email</span>
+                                <input class="form-control" type="email" name="email" placeholder="Enter your email" required>
+                            </div>
+                            <div class="form-group">
+                                <span class="form-label">Phone</span>
+                                <input class="form-control" type="text" name="phone" placeholder="Enter your phone number" required>
+                                <h3>Total Amount: ₹<span id="total_amount">{{ total_amount }}</span></h3>
+                            </div>
+                            <div class="form-btn">
+                                <button  class="btn btn-primary">Place Order</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+    document.getElementById('pay-button').addEventListener('click', function() {
+        const productId = this.getAttribute('data-product-id');
+        const url = `/create_order/${productId}/`;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                alert('Error: ' + data.error);
+            } else {
+                // Initialize Razorpay payment
+                const options = {
+                    key: data.key,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: data.product_name,
+                    description: 'Payment for ' + data.product_name,
+                    order_id: data.order_id,
+                    handler: function(response) {
+                        alert('Payment successful! Payment ID: ' + response.razorpay_payment_id);
+                      window.location.href = `/payment-success/?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}`;
+
+                    },
+                    prefill: {
+                        name: '{{ request.user.first_name }} {{ request.user.last_name }}',
+                        email: '{{ request.user.email }}',
+                    },
+                    theme: {
+                        color: '#F37254',
+                    },
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    });
+    </script>
+</body>
+</html>

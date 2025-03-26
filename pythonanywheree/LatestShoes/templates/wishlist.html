@@ -1,0 +1,169 @@
+
+
+{% block content %}
+<h2>My Wishlist</h2>
+<div class="wishlist-container">
+    {% for item in wishlist %}
+
+        <div class="product-card" id="wishlist-item-{{ item.product.id }}">
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.productname }}" class="product-image">
+
+
+            <div class="product-info">
+                <h3>{{ item.product.productname }}</h3>
+                <p class="price">Price: Rs. {{ item.product.price }}</p>
+
+                <div class="button-group">
+                    <!-- Buy Now Button -->
+                     <a href="{% url 'showcart' %}" class="buy-now-btn">
+                Buy Now
+            </a>
+
+                    <!-- Remove Button -->
+                    <button class="wishlist-btn" data-product-id="{{ item.product.id }}">Remove</button>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>Your wishlist is empty.</p>
+    {% endfor %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            let productId = this.getAttribute('data-product-id');
+            let csrftoken = getCookie('csrftoken');
+
+            fetch(`/wishlist/toggle/${productId}/`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'removed') {
+                    document.getElementById(`wishlist-item-${productId}`).remove();
+                }
+            });
+        });
+    });
+});
+
+// Function to get CSRF token from cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+/* Wishlist Container - Ensure proper spacing */
+.wishlist-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Product Card - Ensure equal height */
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+    transition: 0.3s ease;
+    width: 250px; /* Fixed width */
+    min-height: 400px; /* Ensure all products have same height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Product Image - Consistent Size */
+.product-image {
+    width: 100%;
+    height: 200px; /* Fixed height for uniformity */
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Product Info */
+.product-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Price Text */
+.price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Button Group - Ensure alignment */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Buy Now Button - Blue */
+.buy-now-btn {
+    flex: 1;
+    padding: 8px 0;
+    background: #789eef; /* Blue Color */
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    transition: 0.3s ease;
+}
+
+.buy-now-btn:hover {
+    background: #0056b3;
+}
+
+/* Remove Button - Red */
+.wishlist-btn {
+    flex: 1;
+    padding: 8px 0;
+    background: #dc3545;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+    text-align: center;
+}
+
+.wishlist-btn:hover {
+    background: #c82333;
+}
+
+
+</style>
+
+{% endblock %}

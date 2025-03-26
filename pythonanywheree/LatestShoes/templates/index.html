@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+
+{% block main %}
+    {% load static %}
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+    <div class="site-blocks-cover" style="background-image: url(/static/images/hero_1.jpg);" data-aos="fade">
+      <div class="container">
+        <div class="row align-items-start align-items-md-center justify-content-end">
+          <div class="col-md-5 text-center text-md-left pt-5 pt-md-0">
+            <h1 class="mb-2">Finding Your Perfect Shoes</h1>
+            <div class="intro-text text-center text-md-left">
+              <p class="mb-4">Footwell is one stop fashion destination for smart buyers. We deliver our customers with an amazing range of footwear for men and women that are high on fashion and style.</p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="site-section site-blocks-2">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
+            <a class="block-2-item" href="#">
+              <figure class="image">
+                <img src="{% static 'images/women.jpg' %}" alt="" class="img-fluid">
+              </figure>
+              <div class="text">
+                <span class="text-uppercase">Collections</span>
+                <h3>Women</h3>
+              </div>
+            </a>
+          </div>
+          <div class="col-sm-6 col-md-6 col-lg-4 mb-5 mb-lg-0" data-aos="fade" data-aos-delay="200">
+            <a class="block-2-item" href="#">
+              <figure class="image">
+                <img src="{% static 'images/men.jpg' %}" alt="" class="img-fluid">
+              </figure>
+              <div class="text">
+                <span class="text-uppercase">Collections</span>
+                <h3>Men</h3>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section block-3 site-blocks-2 bg-light" id="newarrival">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-7 site-section-heading text-center pt-4">
+            <h2>Featured Products</h2>
+          </div>
+        </div>
+
+          <div class="row1" >
+              {% for p in pros %}
+ <div class="item" style="background: #efefef; display: inline-block; position: relative; padding: 10px; width: 220px; text-align: center; border-radius: 10px;">
+
+    <!-- Wishlist Button in Top Right -->
+                <a href="#" class="wishlist-btn" data-product-id="{{ p.id }}" style="position: absolute; top: 10px; right: 10px; text-decoration: none; font-size: 20px;">
+    <span class="icon {% if p in wishlist %}icon-heart{% else %}icon-heart-o{% endif %}"></span>
+</a>
+
+
+
+
+    <img src="{{ p.image.url }}" width="200px" height="250em" style="border-radius: 5px;" >
+
+    <h2 style="text-align: center; width: 100%; font-size: 16px; margin-top: 10px;">{{ p.productname }}</h2>
+    <h3 style="font-weight: bold; text-align: center; font-size: 18px; color: #333;">Rs. {{ p.price }}</h3>
+    <h3 style="font-size: 14px; text-align: center; color: #777;">Size {{ p.size }}</h3>
+ <!-- Cart Icon -->
+    <a href="{% url 'mycart' p.id %}" class="cart-btn" style="text-decoration: none; font-size: 20px;">
+        <span class="icon icon-shopping-cart"></span>
+    </a>
+
+    <!-- Buy Now Button -->
+
+
+    <a href="{% url 'mycart' p.id %}"
+       style="display: block; width: 100%; padding: 10px 0; background: #789eef; text-align: center; color: #fff;
+              border-radius: 5px; text-transform: uppercase; font-weight: bold; margin-top: 10px; transition: 0.3s ease;">
+        Buy Now
+    </a>
+</div>
+
+
+
+              {% endfor %}
+          </div>
+
+      </div>
+    </div>
+
+    <div class="site-section block-3 site-blocks-2 bg-light" id="men">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-7 site-section-heading text-center pt-4">
+            <h2>Mens Shoes</h2>
+          </div>
+        </div>
+
+          <div class="row1" >
+              {% for p in mens %}
+                   <!-- Wishlist Button in Top Right -->
+            <div class="item" style="background: #efefef; display: inline-block; position: relative; padding: 10px; width: 220px; text-align: center; border-radius: 10px;">
+<a href="add_wishlist/{{i.pk}}" class="wishlist-btn" data-product-id="{{ p.id }}">
+<span class="icon icon-heart-o"></span>
+</a>
+
+    <img src="{{ p.image.url }}" width="200px" height="250em" style="border-radius: 5px;">
+
+    <h2 style="text-align: center; width: 100%; font-size: 16px; margin-top: 10px;">{{ p.productname }}</h2>
+    <h3 style="font-weight: bold; text-align: center; font-size: 18px; color: #333;">Rs. {{ p.price }}</h3>
+    <h3 style="font-size: 14px; text-align: center; color: #777;">Size {{ p.size }}</h3>
+ <!-- Cart Icon -->
+    <a href="{% url 'mycart' p.id %}" class="cart-btn" style="text-decoration: none; font-size: 20px;">
+        <span class="icon icon-shopping-cart"></span>
+    </a>
+
+    <!-- Buy Now Button -->
+    <a href="{% url 'mycart' p.id %}"
+       style="display: block; width: 100%; padding: 10px 0; background: #789eef; text-align: center; color: #fff;
+              border-radius: 5px; text-transform: uppercase; font-weight: bold; margin-top: 10px; transition: 0.3s ease;">
+        Buy Now
+    </a>
+</div>
+
+              {% endfor %}
+          </div>
+
+      </div>
+    </div>
+
+    <div class="site-section block-3 site-blocks-2 bg-light" id="women" >
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-7 site-section-heading text-center pt-4">
+            <h2>Womens</h2>
+          </div>
+        </div>
+
+          <div class="row1" >
+              {% for p in womens %}
+                <div class="item" style="background: #efefef; display: inline-block; position: relative; padding: 10px; width: 220px; text-align: center; border-radius: 10px;">
+
+    <!-- Wishlist Button in Top Right -->
+    <a href="add_wishlist/{{i.pk}}" class="wishlist-btn" data-product-id="{{ p.id }}"
+       style="position: absolute; top: 10px; right: 10px; text-decoration: none; font-size: 20px;">
+        <span class="icon icon-heart-o"></span>
+    </a>
+
+    <img src="{{ p.image.url }}" width="200px" height="250em" style="border-radius: 5px;">
+
+    <h2 style="text-align: center; width: 100%; font-size: 16px; margin-top: 10px;">{{ p.productname }}</h2>
+    <h3 style="font-weight: bold; text-align: center; font-size: 18px; color: #333;">Rs. {{ p.price }}</h3>
+    <h3 style="font-size: 14px; text-align: center; color: #777;">Size {{ p.size }}</h3>
+                     <a href="{% url 'mycart' p.id %}" class="cart-btn" style="text-decoration: none; font-size: 20px;">
+        <span class="icon icon-shopping-cart"></span>
+    </a>
+
+
+    <!-- Buy Now Button -->
+    <a href="{% url 'mycart' p.id %}"
+       style="display: block; width: 100%; padding: 10px 0; background: #789eef; text-align: center; color: #fff;
+              border-radius: 5px; text-transform: uppercase; font-weight: bold; margin-top: 10px; transition: 0.3s ease;">
+        Buy Now
+    </a>
+</div>
+
+              {% endfor %}
+          </div>
+
+      </div>
+    </div>
+
+    <div class="site-section block-8" id="aboutus">
+      <div class="container">
+        <div class="row justify-content-center  mb-5">
+          <div class="col-md-7 site-section-heading text-center pt-4">
+            <h2>ABOUT US</h2>
+          </div>
+        </div>
+        <div class="row align-items-center">
+          <div class="col-md-12 col-lg-7 mb-5">
+            <a href="#"><img src="{% static 'images/blog_1.jpg' %}" alt="Image placeholder" class="img-fluid rounded"></a>
+          </div>
+          <div class="col-md-12 col-lg-5 text-center pl-md-5">
+            <h2><a href="#">Footwell - Shoe Collections</a></h2>
+            <p class="post-meta mb-4">By <a href="#">Anuraj R</a> <span class="block-8-sep">&bullet;</span> FEB 10, 2025</p>
+            <p>A group of people who got together to create footwear, but got high on style somewhere in between, started watching fashion networks and created something that can be recognized only by someone out of this planet. That's how we started and that's how we are still going on.
+We are India's one of its kind online personalized store with a group of stylists to recommend you the most stylish footwear as per your needs. We bring you a huge collection, created around many themes and styles to bring you cult classic fashion.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- Add this script to handle wishlist toggling -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            let productId = this.getAttribute('data-product-id');
+            fetch(`/wishlist/toggle/${productId}/`, {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    this.querySelector('span').classList.remove('icon-heart-o');
+                    this.querySelector('span').classList.add('icon-heart');
+                } else if (data.status === 'removed') {
+                    this.querySelector('span').classList.remove('icon-heart');
+                    this.querySelector('span').classList.add('icon-heart-o');
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

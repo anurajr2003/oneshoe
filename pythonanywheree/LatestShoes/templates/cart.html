@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-0">
+                <a href="{% url 'index' %}">Home</a> <span class="mx-2 mb-0">/</span>
+                <strong class="text-black">Cart</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="site-section">
+    <div class="container">
+        <div class="row mb-5">
+            <form class="col-md-12" method="post">
+                <div class="site-blocks-table">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="product-thumbnail">Image</th>
+                                <th class="product-name">Product</th>
+                                <th class="product-price">Price</th>
+                                <th class="product-quantity">Quantity</th>
+                                <th class="product-total">Total</th>
+                                <th class="product-remove">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for car in carts %}
+                            <tr>
+                                <td class="product-thumbnail">
+                                    <img src="{{ car.prd_id.image.url }}" alt="Image" class="img-fluid">
+                                </td>
+                                <td class="product-name">
+                                    <h2 class="h5 text-black">{{ car.prd_id.productname }}</h2>
+                                </td>
+                                <td class="itemprice">₹{{ car.prd_id.price }}</td>
+                                <td>
+                                    <div class="input-group mb-3" style="max-width: 120px;">
+                                        <input type="number" class="form-control text-center qty" onchange="calculatetotal()"
+                                               value="{{ car.qty }}" min="1" max="{{ car.prd_id.quantity }}">
+                                    </div>
+                                </td>
+                                <td class="showtotal">₹{{ car.prd_id.price|floatformat:2 }}</td>
+                                <td>
+                                    <a href="{% url 'removecart' car.id %}" class="btn btn-primary btn-sm">X</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">Your cart is empty.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6 pl-5">
+                <div class="row justify-content-end">
+                    <div class="col-md-7">
+                        <div class="row">
+                            <div class="col-md-12 text-right border-bottom mb-5">
+                                <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <span class="text-black">Total</span>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <strong class="text-black grand-total">₹{{ total|floatformat:2 }}</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+<a href="{% url 'cart_booking' %}" class="btn btn-primary">Proceed to Checkout</a></div>
+
+<script>
+    function proceedToCheckout() {
+        // Replace `product_id` with the actual product ID from your cart
+        const productId = 5; // Example product ID
+        window.location.href = `/booking/${productId}/`;
+    }
+</script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        calculatetotal();
+    };
+
+    function calculatetotal() {
+        let itemprice = document.getElementsByClassName('itemprice');
+        let itemquantity = document.getElementsByClassName('qty');
+        let pastetotal = document.getElementsByClassName('showtotal');
+
+        let total = 0;
+
+        for (let i = 0; i < itemprice.length; i++) {
+            let price = parseFloat(itemprice[i].innerHTML.replace('₹', ''));
+            let quantity = parseInt(itemquantity[i].value);
+            let itemTotal = price * quantity;
+            pastetotal[i].innerHTML = "₹" + itemTotal.toFixed(2);
+            total += itemTotal;
+        }
+
+        calculategrandtotal(total);
+    }
+
+    function calculategrandtotal(total) {
+        document.querySelector(".grand-total").innerHTML = "₹" + total.toFixed(2);
+    }
+
+    // Razorpay Payment Integration
+    document.getElementById('pay-button').onclick = function(e) {
+        fetch('/create_order/')
+            .then(response => response.json())
+            .then(data => {
+                const options = {
+                    key: data.key,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: data.product_name,
+                    order_id: data.order_id,
+                    handler: function(response) {
+                        window.location.href = `/payment_success/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`;
+                    }
+                };
+                const rzp = new Razorpay(options);
+                rzp.open();
+            })
+            .catch(error => console.error('Error:', error));
+    };
+</script>
+
+{% endblock %}

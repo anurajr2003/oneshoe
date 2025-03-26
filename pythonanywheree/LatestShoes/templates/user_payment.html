@@ -1,0 +1,37 @@
+<div class="col-12 d-flex justify-content-center">
+    <h3>Amount: ₹{{ total_amount }}</h3> <!-- This shows the user-friendly amount -->
+</div>
+
+<div class="col-12 d-flex justify-content-center mt-3">
+    <form action="../success" method="POST">
+        {% csrf_token %}
+        <script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            data-key="rzp_test_SROSnyInFv81S4"
+            data-amount="{{ total_amount }}"
+            data-currency="INR"
+            data-order_id="{{ order_id }}"
+            data-buttontext="Pay with Razorpay"
+            data-name="Django Payment"
+            data-description="This is a test payment"
+            data-image="https://example.com/your_logo.jpg"
+            data-prefill.name="{{ user.get_full_name }}"
+            data-prefill.email="{{ user.email }}"
+            data-theme.color="#4CAF50">
+        </script>
+        <input type="hidden" custom="Hidden Element" name="hidden">
+         <div class="row mb-5">
+                  <div class="col-md-6">
+                    <span class="text-black">Total</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong class="text-black grand-total"></strong>
+                  </div>
+                </div>
+    </form>
+</div>
+
+<!-- Debugging -->
+<!--<p>Total Amount (paise): {{ total_amount }}</p>-->
+<!--<p>Order ID: {{ order_id }}</p>-->
+<!--<p>User-Facing Amount (₹): {{ total_amount }}</p>-->
